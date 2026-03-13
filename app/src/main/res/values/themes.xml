@@ -1,9 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
+<<<<<<< HEAD
     <style name="Base.Theme.Hackathon" parent="Theme.Material3.DayNight.NoActionBar">
+=======
+    <style name="Base.Theme.Hackathon_infomatrix" parent="Theme.Material3.DayNight.NoActionBar">
+>>>>>>> c6dac95f5ada8c0f786490a50c7080025fb3324a
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
+<<<<<<< HEAD
     <style name="Theme.Hackathon" parent="Base.Theme.Hackathon" />
+=======
+    <style name="Theme.Hackathon_infomatrix" parent="Base.Theme.Hackathon_infomatrix" />
+>>>>>>> c6dac95f5ada8c0f786490a50c7080025fb3324a
 </resources>

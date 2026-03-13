@@ -8,10 +8,17 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
+<<<<<<< HEAD
                   <option name="appId" value="PLACEHOLDER" />
                   <option name="mobileSdkAppId" value="" />
                   <option name="projectId" value="" />
                   <option name="projectNumber" value="" />
+=======
+                  <option name="appId" value="com.example.hackathon_infomatrix" />
+                  <option name="mobileSdkAppId" value="1:377094046345:android:134f3e799082fcba8e7c58" />
+                  <option name="projectId" value="hackathon-infomatrix" />
+                  <option name="projectNumber" value="377094046345" />
+>>>>>>> c6dac95f5ada8c0f786490a50c7080025fb3324a
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

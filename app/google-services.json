@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "377094046345",
+    "project_id": "hackathon-infomatrix",
+    "storage_bucket": "hackathon-infomatrix.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377094046345:android:c797a1876b63f26b8e7c58",
+        "android_client_info": {
+          "package_name": "com.example.hackathon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyZjg2htcZjd8aaekRnPJ5yPPM9EluGuo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377094046345:android:134f3e799082fcba8e7c58",
+        "android_client_info": {
+          "package_name": "com.example.hackathon_infomatrix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyZjg2htcZjd8aaekRnPJ5yPPM9EluGuo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
