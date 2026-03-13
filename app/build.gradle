@@ -45,14 +45,12 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    // Firebase BOM – автоматично підбирає сумісні версії
-    implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
+    // Firebase
+    implementation 'com.google.firebase:firebase-auth:22.3.0'
+    implementation 'com.google.firebase:firebase-firestore:24.10.0'
 
-    // Firebase Analytics
-    implementation("com.google.firebase:firebase-analytics")
-
-    // Firebase Authentication
-    implementation("com.google.firebase:firebase-auth")
-
-    implementation("com.google.firebase:firebase-firestore")
+    // Інші залежності
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
