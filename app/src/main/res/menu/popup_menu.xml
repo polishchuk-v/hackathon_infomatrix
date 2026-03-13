@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_exit"
+        android:title="Вийти"
+        android:icon="@drawable/ic_exit" />
+
+    <item
+        android:id="@+id/menu_other"
+        android:title="Інше" />
+
+</menu>

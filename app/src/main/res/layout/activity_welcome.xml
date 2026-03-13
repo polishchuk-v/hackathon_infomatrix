@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pale_sky_blue">
+
+    <View
+        android:id="@+id/circleOne"
+        android:layout_width="700dp"
+        android:layout_height="600dp"
+        android:background="@drawable/circle_background_dodger_blue"
+        android:translationX="100dp"
+        android:translationY="-90dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/circleTwo"
+        android:layout_width="700dp"
+        android:layout_height="600dp"
+        android:background="@drawable/circle_background_midnight_blue"
+        android:translationX="80dp"
+        android:translationY="-170dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/circleThree"
+        android:layout_width="700dp"
+        android:layout_height="600dp"
+        android:background="@drawable/circle_background_deep_blue_graydeep"
+        android:translationX="70dp"
+        android:translationY="-215dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="72dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Welcome!"
+        android:textColor="@color/pale_sky_blue1"
+        android:textSize="60sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewWelcomeH2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Nice to see you again!"
+        android:textColor="@color/pale_sky_blue1"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="@id/textViewWelcome"
+        app:layout_constraintTop_toBottomOf="@id/textViewWelcome" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonLoginWelcome"
+        android:layout_width="159dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button_filled"
+        android:fontFamily="sans-serif-light"
+        android:text="Login"
+        android:textAllCaps="false"
+        android:textColor="@color/pale_sky_blue1"
+        android:textSize="23sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/textViewWelcome"
+        app:layout_constraintTop_toBottomOf="@id/textViewWelcomeH2"
+        app:layout_constraintVertical_bias="0.022" />
+
+    <TextView
+        android:id="@+id/textViewRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="90dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Don’t have an account ? "
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/circleOne" />
+
+    <TextView
+        android:id="@+id/linkToRegister"
+        android:layout_width="161dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:clickable="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:fontFamily="sans-serif-light"
+        android:text="Register"
+        android:textColor="@color/steel_blue"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/textViewRegister"
+        app:layout_constraintStart_toEndOf="@id/textViewRegister"
+        app:layout_constraintTop_toTopOf="@id/textViewRegister" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
