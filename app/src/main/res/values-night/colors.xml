@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="black">#C9DBED</color>
+    <color name="blue">#4FB5F4</color>
+    <color name="steel_blue">#1A6BAD</color>
+    <color name="pale_sky_blue">#1c1b1f</color>
+    <color name="midnight_blue">#1A2C54</color>
+    <color name="deep_blue_gray">#1C345D</color>
+    <color name="dodger_blue">#1482F0</color>
+</resources>
