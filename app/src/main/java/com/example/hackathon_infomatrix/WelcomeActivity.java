@@ -27,16 +27,16 @@ public class WelcomeActivity extends AppCompatActivity {
         initViews();
 
         //Перехід на сторінку login
-//        buttonLogin.setOnClickListener(v ->  {
-//            startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
-//            finish();
-//        });
-//
-//        //Перехід на сторінку register
-//        registerLink.setOnClickListener(v -> {
-//            startActivity(new Intent(WelcomeActivity.this, RegisterActivity.class));
-//            finish();
-//        });
+        buttonLogin.setOnClickListener(v ->  {
+            startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+            finish();
+        });
+
+        //Перехід на сторінку register
+        registerLink.setOnClickListener(v -> {
+            startActivity(new Intent(WelcomeActivity.this, RegisterActivity.class));
+            finish();
+        });
     }
 
     @Override
