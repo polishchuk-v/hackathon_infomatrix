@@ -6,7 +6,7 @@
     android:orientation="horizontal"
 
         android:padding="12dp"
-        android:background="@color/pale_sky_blue">
+        android:background="@color/background_dark">
 
     <ImageView
         android:id="@+id/ic_exit"
@@ -20,6 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
-        android:textColor="@color/black"
+        android:textColor="@color/pale_sky_blue"
         android:textSize="16sp" />
 </LinearLayout>
