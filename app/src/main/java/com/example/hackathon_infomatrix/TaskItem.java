@@ -1,21 +1,21 @@
 package com.example.hackathon_infomatrix;
 
-public class TaskModel {
+public class TaskItem {
     private String id;
     private String title;
     private boolean completed;
     private long createdAt;
-    private String userEmail; // Змінено з userId на userEmail
+    private String userId;
 
-    public TaskModel() {
-        // Порожній конструктор для Firestore
+    public TaskItem() {
+        // Порожній конструктор потрібен для Firestore
     }
 
-    public TaskModel(String title, boolean completed, long createdAt, String userEmail) {
+    public TaskItem(String title, boolean completed, long createdAt, String userId) {
         this.title = title;
         this.completed = completed;
         this.createdAt = createdAt;
-        this.userEmail = userEmail;
+        this.userId = userId;
     }
 
     // Гетери та сетери
@@ -51,11 +51,11 @@ public class TaskModel {
         this.createdAt = createdAt;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.hackathon_infomatrix">
 
-    <!-- Додайте необхідні дозволи -->
+    <!-- Дозволи -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -15,11 +15,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Hackathon_infomatrix"
-        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         tools:targetApi="31">
 
-        <!-- Головна активність - WelcomeActivity (стартова) -->
+        <!-- WelcomeActivity -->
         <activity
             android:name=".WelcomeActivity"
             android:exported="true"
@@ -30,31 +29,46 @@
             </intent-filter>
         </activity>
 
-        <!-- Activity для входу -->
+        <!-- LoginActivity -->
         <activity
             android:name=".LoginActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".WelcomeActivity" />
+            android:parentActivityName=".WelcomeActivity"
+            android:screenOrientation="portrait" />
 
-        <!-- Activity для реєстрації -->
+        <!-- RegisterActivity -->
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".LoginActivity" />
+            android:parentActivityName=".WelcomeActivity"
+            android:screenOrientation="portrait" />
 
-        <!-- Activity для відновлення пароля -->
+        <!-- PasswordRecoveryActivity -->
         <activity
             android:name=".PasswordRecoveryActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".LoginActivity" />
+            android:parentActivityName=".LoginActivity"
+            android:screenOrientation="portrait" />
 
-        <!-- Головна активність після входу -->
+        <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
+            android:parentActivityName=".WelcomeActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- AddTaskActivity -->
+        <activity
+            android:name=".AddTaskActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- ProgressActivity -->
+        <activity
+            android:name=".ProgressActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" />
 
     </application>

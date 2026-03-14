@@ -2,8 +2,8 @@ package com.example.hackathon_infomatrix;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -25,222 +26,153 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
-    private static final int ADD_TASK_REQUEST_CODE = 100;
-
     private ListView taskListView;
     private TaskAdapter taskAdapter;
-    private TextView flameCountText;
+    private List<TaskItem> taskList;
     private TextView emptyStateText;
+    private LinearLayout bottomNavAdd, bottomNavToday, bottomNavProgress;
     private ImageView imageViewMenu;
-    private LinearLayout bottomNavToday;
-    private LinearLayout bottomNavAdd;
-    private LinearLayout bottomNavProgress;
-    private LinearLayout flameContainer;
+    private TextView flameCountText;
 
-    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private String userEmail;
-
-    private List<TaskModel> allTasks = new ArrayList<>();
-    private List<TaskModel> todayTasks = new ArrayList<>();
+    private FirebaseFirestore db;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-
-        if (mAuth.getCurrentUser() == null) {
-            Toast.makeText(this, "Користувач не авторизований", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        userEmail = mAuth.getCurrentUser().getEmail();
-
-        if (userEmail == null || userEmail.isEmpty()) {
-            Toast.makeText(this, "Email користувача не знайдено", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         initViews();
+        setupFirebase();
+        loadTasks();
         setupClickListeners();
-        loadTasksFromFirebase();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadTasksFromFirebase();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_TASK_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Оновлюємо список після створення нової звички
-            loadTasksFromFirebase();
-            Toast.makeText(this, "Список оновлено", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void initViews() {
-        try {
-            taskListView = findViewById(R.id.tasklist);
-            flameCountText = findViewById(R.id.flameCountText);
-            emptyStateText = findViewById(R.id.emptyStateText);
-            imageViewMenu = findViewById(R.id.imageViewMenu);
-            bottomNavToday = findViewById(R.id.bottomNavToday);
-            bottomNavAdd = findViewById(R.id.bottomNavAdd);
-            bottomNavProgress = findViewById(R.id.bottomNavProgress);
-            flameContainer = findViewById(R.id.flameContainer);
+        taskListView = findViewById(R.id.tasklist);
+        emptyStateText = findViewById(R.id.emptyStateText);
+        bottomNavAdd = findViewById(R.id.bottomNavAdd);
+        bottomNavToday = findViewById(R.id.bottomNavToday);
+        bottomNavProgress = findViewById(R.id.bottomNavProgress);
+        imageViewMenu = findViewById(R.id.imageViewMenu);
+        flameCountText = findViewById(R.id.flameCountText);
 
-            if (taskListView == null) {
-                Toast.makeText(this, "Помилка: ListView не знайдено! Перевірте ID в XML", Toast.LENGTH_LONG).show();
-                return;
-            }
+        taskList = new ArrayList<>();
+        taskAdapter = new TaskAdapter(this, taskList);
+        taskListView.setAdapter(taskAdapter);
+    }
 
-            taskAdapter = new TaskAdapter(this, todayTasks);
-            taskListView.setAdapter(taskAdapter);
+    private void setupFirebase() {
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
-        } catch (Exception e) {
-            Log.e(TAG, "Помилка ініціалізації: " + e.getMessage(), e);
-            Toast.makeText(this, "Помилка ініціалізації: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        if (currentUser == null) {
+            // Якщо користувач не авторизований, перенаправляємо на екран входу
+            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+            finish();
         }
     }
 
-    private void setupClickListeners() {
-        imageViewMenu.setOnClickListener(v -> {
-            Toast.makeText(this, "📱 Меню", Toast.LENGTH_SHORT).show();
-        });
+    private void loadTasks() {
+        if (currentUser == null) return;
 
-        bottomNavToday.setOnClickListener(v -> {
-            filterTodayTasks();
-            Toast.makeText(this, "📅 Завдання на сьогодні", Toast.LENGTH_SHORT).show();
-        });
-
-        bottomNavAdd.setOnClickListener(v -> {
-            try {
-                Log.d(TAG, "Відкриття AddTaskActivity");
-                Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
-                startActivityForResult(intent, ADD_TASK_REQUEST_CODE);
-            } catch (Exception e) {
-                Log.e(TAG, "Помилка відкриття AddTaskActivity: " + e.getMessage(), e);
-                Toast.makeText(this, "Помилка: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        bottomNavProgress.setOnClickListener(v -> {
-            Toast.makeText(this, "📊 Прогрес", Toast.LENGTH_SHORT).show();
-        });
-
-        flameContainer.setOnClickListener(v -> {
-            Toast.makeText(this, "🔥 Прогрес", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void loadTasksFromFirebase() {
-        if (userEmail == null) return;
-
-        Log.d(TAG, "Завантаження завдань для email: " + userEmail);
-
-        db.collection("tasks")
-                .whereEqualTo("userEmail", userEmail)
+        db.collection("users").document(currentUser.getUid())
+                .collection("tasks")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            allTasks.clear();
+                            taskList.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                TaskModel taskModel = document.toObject(TaskModel.class);
-                                taskModel.setId(document.getId());
-                                allTasks.add(taskModel);
+                                TaskItem taskItem = document.toObject(TaskItem.class);
+                                taskItem.setId(document.getId());
+                                taskList.add(taskItem);
                             }
-
-                            Log.d(TAG, "Завантажено " + allTasks.size() + " завдань");
-
-                            filterTodayTasks();
-                            updateProgress();
-
+                            taskAdapter.notifyDataSetChanged();
+                            updateEmptyState();
+                            updateFlameCount();
                         } else {
-                            Log.e(TAG, "Помилка завантаження: " + task.getException().getMessage(), task.getException());
-                            Toast.makeText(MainActivity.this, "Помилка завантаження: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Помилка завантаження завдань", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    private void filterTodayTasks() {
-        if (todayTasks == null || allTasks == null) return;
-
-        todayTasks.clear();
-        todayTasks.addAll(TaskUtils.filterTodayTasks(allTasks));
-
-        if (todayTasks.isEmpty()) {
+    private void updateEmptyState() {
+        if (taskList.isEmpty()) {
             emptyStateText.setVisibility(View.VISIBLE);
             taskListView.setVisibility(View.GONE);
         } else {
             emptyStateText.setVisibility(View.GONE);
             taskListView.setVisibility(View.VISIBLE);
         }
-
-        if (taskAdapter != null) {
-            taskAdapter.updateTasks(todayTasks);
-        }
     }
 
-    public void updateTaskStatus(TaskModel task, boolean isChecked) {
-        for (int i = 0; i < allTasks.size(); i++) {
-            if (allTasks.get(i).getId() != null && allTasks.get(i).getId().equals(task.getId())) {
-                allTasks.get(i).setCompleted(isChecked);
-                break;
+    private void updateFlameCount() {
+        if (taskList.isEmpty()) {
+            flameCountText.setText("0%");
+            return;
+        }
+
+        int completedCount = 0;
+        for (TaskItem task : taskList) {
+            if (task.isCompleted()) {
+                completedCount++;
             }
         }
-
-        if (task.getId() != null) {
-            db.collection("tasks")
-                    .document(task.getId())
-                    .update("completed", isChecked)
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Статус завдання оновлено: " + task.getId());
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Помилка оновлення статусу: " + e.getMessage(), e);
-                        Toast.makeText(this, "Помилка оновлення: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        }
-
-        updateProgress();
-        filterTodayTasks();
-
-        String message = isChecked ? "✅ Завдання виконано" : "📝 Завдання поновлено";
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public void deleteTask(TaskModel task) {
-        if (task.getId() != null) {
-            db.collection("tasks")
-                    .document(task.getId())
-                    .delete()
-                    .addOnSuccessListener(aVoid -> {
-                        allTasks.remove(task);
-                        filterTodayTasks();
-                        updateProgress();
-                        Log.d(TAG, "Завдання видалено: " + task.getId());
-                        Toast.makeText(MainActivity.this, "🗑️ Завдання видалено", Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Помилка видалення: " + e.getMessage(), e);
-                        Toast.makeText(MainActivity.this, "Помилка видалення: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        }
-    }
-
-    private void updateProgress() {
-        int progress = TaskUtils.calculateProgress(allTasks);
+        int progress = (completedCount * 100) / taskList.size();
         flameCountText.setText(progress + "%");
+    }
+
+    private void setupClickListeners() {
+        bottomNavAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, AddTaskActivity.class));
+            }
+        });
+
+        bottomNavToday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Поки що просто перезавантажуємо список
+                loadTasks();
+                Toast.makeText(MainActivity.this, "Сьогодні", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        bottomNavProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Прогрес: " + flameCountText.getText(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        imageViewMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Тут можна відкрити меню (наприклад, BottomSheet або PopupMenu)
+                Toast.makeText(MainActivity.this, "Меню", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        taskListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TaskItem task = taskList.get(position);
+                // Відкрити деталі завдання або редагування
+                Toast.makeText(MainActivity.this, "Завдання: " + task.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Оновлюємо список при поверненні на екран
+        loadTasks();
     }
 }

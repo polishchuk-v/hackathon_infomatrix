@@ -1,117 +1,134 @@
 package com.example.hackathon_infomatrix;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddTaskActivity extends AppCompatActivity {
 
-    private EditText editHabitName;
+    private EditText taskTitleEditText;
+    private Button createButton;
     private Toolbar toolbar;
-    private androidx.appcompat.widget.AppCompatButton btnCreate;
 
-    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private String userEmail;
+    private FirebaseFirestore db;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
 
-        // Ініціалізація Firebase
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-
-        // Перевірка авторизації
-        if (mAuth.getCurrentUser() == null) {
-            Toast.makeText(this, "Користувач не авторизований", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        // Отримуємо email користувача
-        userEmail = mAuth.getCurrentUser().getEmail();
-
-        if (userEmail == null || userEmail.isEmpty()) {
-            Toast.makeText(this, "Email користувача не знайдено", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
         initViews();
+        setupFirebase();
+        setupToolbar();
         setupClickListeners();
     }
 
     private void initViews() {
+        taskTitleEditText = findViewById(R.id.editTextLoginEmail);
+        createButton = findViewById(R.id.butonCreate);
         toolbar = findViewById(R.id.toolbar);
-        editHabitName = findViewById(R.id.editTextLoginEmail);
-        btnCreate = findViewById(R.id.butonCreate);
+    }
 
-        // Налаштування toolbar
+    private void setupFirebase() {
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
+        if (currentUser == null) {
+            Toast.makeText(this, "Користувач не авторизований", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    private void setupToolbar() {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle("Нова звичка");
         }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     private void setupClickListeners() {
-        // Стрілка назад
-        toolbar.setNavigationOnClickListener(v -> {
-            finish(); // Повертаємось до MainActivity без збереження
-        });
-
-        // Кнопка створити
-        btnCreate.setOnClickListener(v -> {
-            createNewHabit();
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createTask();
+            }
         });
     }
 
-    private void createNewHabit() {
-        String habitName = editHabitName.getText().toString().trim();
+    private void createTask() {
+        String title = taskTitleEditText.getText().toString().trim();
 
-        // Перевірка чи поле не пусте
-        if (TextUtils.isEmpty(habitName)) {
-            Toast.makeText(this, "Введіть назву звички", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(title)) {
+            taskTitleEditText.setError("Введіть назву завдання");
+            taskTitleEditText.requestFocus();
             return;
         }
 
-        // Створюємо об'єкт задачі
-        TaskModel newTask = new TaskModel();
-        newTask.setTitle(habitName);
-        newTask.setCompleted(false);
-        newTask.setCreatedAt(System.currentTimeMillis());
-        newTask.setUserEmail(userEmail);
+        if (currentUser == null) return;
 
-        // Зберігаємо в Firebase
-        db.collection("tasks")
-                .add(newTask)
-                .addOnSuccessListener(documentReference -> {
-                    // Отримуємо ID створеного документа
-                    String taskId = documentReference.getId();
-                    newTask.setId(taskId);
+        // Показуємо індикатор завантаження (можна додати ProgressBar)
+        createButton.setEnabled(false);
 
-                    Toast.makeText(this, "✅ Звичку створено!", Toast.LENGTH_SHORT).show();
+        // Створюємо об'єкт завдання
+        Map<String, Object> task = new HashMap<>();
+        task.put("title", title);
+        task.put("completed", false);
+        task.put("createdAt", System.currentTimeMillis());
+        task.put("userId", currentUser.getUid());
 
-                    // Повертаємо результат до MainActivity
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("new_task_created", true);
-                    setResult(RESULT_OK, resultIntent);
+        // Зберігаємо в Firestore
+        db.collection("users").document(currentUser.getUid())
+                .collection("tasks")
+                .document()
+                .set(task)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        createButton.setEnabled(true);
 
-                    finish(); // Повертаємось до MainActivity
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "❌ Помилка: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (task.isSuccessful()) {
+                            Toast.makeText(AddTaskActivity.this, "Завдання створено", Toast.LENGTH_SHORT).show();
+                            finish(); // Повертаємось на головний екран
+                        } else {
+                            Toast.makeText(AddTaskActivity.this, "Помилка: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
