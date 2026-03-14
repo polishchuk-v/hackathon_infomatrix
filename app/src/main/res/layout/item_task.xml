@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#3A2A1E"
+    android:padding="12dp"
+    android:layout_margin="4dp"
+    android:gravity="center_vertical">
+
+    <CheckBox
+        android:id="@+id/taskCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"/>
+
+    <TextView
+        android:id="@+id/taskTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Завдання"
+        android:textColor="#F0D9B5"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif"/>
+
+    <TextView
+        android:id="@+id/taskCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="звичайне"
+        android:textColor="#8B7355"
+        android:textSize="14sp"
+        android:layout_marginEnd="8dp"/>
+
+    <TextView
+        android:id="@+id/btnDeleteTask"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="❌"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:clickable="true"/>
+    <!-- DELETE DELETE DELETE -->
+
+</LinearLayout>

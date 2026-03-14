@@ -10,10 +10,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Hackathon">
+        android:theme="@style/Theme.Hackathon_infomatrix">
 
         <activity
-            android:name=".Battle.BattleActivity"
+            android:name="com.example.hackathon.ui.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,9 +22,8 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
-            android:exported="false">
-        </activity>
+            android:name="com.example.hackathon.Battle.BattleActivity"
+            android:exported="false" />
 
     </application>
 </manifest>

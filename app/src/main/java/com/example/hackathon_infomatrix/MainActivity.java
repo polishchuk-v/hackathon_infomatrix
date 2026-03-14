@@ -1,4 +1,4 @@
-package com.example.hackathon_infomatrix;
+/*package com.example.hackathon_infomatrix;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -106,3 +106,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
+*/

@@ -1,4 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#2D1A12">
+
+    <!-- верхняя панелька -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="#3A2A1E">
+
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Вітаємо!"
+            android:textColor="#F0D9B5"
+            android:textSize="20sp"
+            android:fontFamily="serif"/>
+
+        <TextView
+            android:id="@+id/statsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚔️ 0"
+            android:textColor="#F0D9B5"
+            android:textSize="20sp"
+            android:fontFamily="serif"/>
+    </LinearLayout>
+
+    <!-- оглавление списка заданий -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="МОЇ ЗАВДАННЯ"
+        android:textColor="#F0D9B5"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"
+        android:fontFamily="serif"/>
+
+    <!-- список заданий -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tasksRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"/>
+
+    <!-- новая заданка -->
+    <Button
+        android:id="@+id/btnAddTask"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="16dp"
+        android:text="+ ДОДАТИ ЗАВДАННЯ"
+        android:textColor="#F0D9B5"
+        android:textSize="18sp"
+        android:backgroundTint="#4A3727"
+        android:fontFamily="serif"/>
+
+    <!-- панель навигации -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:background="#3A2A1E"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <!-- кнопка настроек -->
+        <TextView
+            android:id="@+id/navSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="⚙️"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:textColor="#8B7355"
+            android:clickable="false"/>
+
+        <!-- кнопка мейн меню -->
+        <TextView
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="🏠"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:textColor="#F0D9B5"
+            android:background="#4A3727"/>
+
+        <!-- кнопка файта -->
+        <TextView
+            android:id="@+id/navBattle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="⚔️"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:textColor="#F0D9B5"
+            android:clickable="true"/>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+    <!-- ЭТОЙ МОЕ, Я ВАШЕ ЗАКОММЕНТИЛ !!!! -->
+
+<!--
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -139,3 +259,4 @@
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 >>>>>>> c6dac95f5ada8c0f786490a50c7080025fb3324a
+-->

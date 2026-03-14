@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#2D1A12"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ЛАСКАВО ПРОСИМО!"
+        android:textColor="#F0D9B5"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"
+        android:fontFamily="serif"/>
+
+    <!-- имя -->
+    <EditText
+        android:id="@+id/editName"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="Ваше ім'я"
+        android:textColorHint="#8B7355"
+        android:textColor="#F0D9B5"
+        android:background="@drawable/edit_text_bg"
+        android:padding="16dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="sans-serif"/>
+
+    <!-- эпштейн -->
+    <EditText
+        android:id="@+id/editAge"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="Ваш вік"
+        android:textColorHint="#8B7355"
+        android:textColor="#F0D9B5"
+        android:background="@drawable/edit_text_bg"
+        android:padding="16dp"
+        android:layout_marginBottom="20dp"
+        android:inputType="number"
+        android:fontFamily="sans-serif"/>
+
+    <!-- выбор регриона -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ваш регіон:"
+        android:textColor="#F0D9B5"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="serif"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroupRegion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp">
+
+        <RadioButton
+            android:id="@+id/radioKyiv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Київ (GMT+2)"
+            android:textColor="#F0D9B5"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/radioWarsaw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Варшава (GMT+1)"
+            android:textColor="#F0D9B5"/>
+
+        <RadioButton
+            android:id="@+id/radioLondon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Лондон (GMT+0)"
+            android:textColor="#F0D9B5"/>
+
+        <RadioButton
+            android:id="@+id/radioNewYork"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Нью-Йорк (GMT-4)"
+            android:textColor="#F0D9B5"/>
+
+        <RadioButton
+            android:id="@+id/radioTokyo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Токіо (GMT+9)"
+            android:textColor="#F0D9B5"/>
+
+    </RadioGroup>
+
+    <!-- начать -->
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="РОЗПОЧАТИ"
+        android:textSize="24sp"
+        android:textColor="#F0D9B5"
+        android:backgroundTint="#4A3727"
+        android:fontFamily="serif"/>
+
+</LinearLayout>

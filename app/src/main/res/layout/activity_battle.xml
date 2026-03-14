@@ -38,6 +38,19 @@
                 android:shadowRadius="3"
                 android:layout_marginBottom="20dp"/>
 
+            <!-- Информация о количестве ударов -->
+            <TextView
+                android:id="@+id/attacksCountText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚔️ УДАРІВ: 0 ⚔️"
+                android:textColor="#F0D9B5"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:fontFamily="serif"
+                android:layout_marginBottom="10dp"/>
+
             <!-- контейнер моба -->
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -65,7 +78,7 @@
                         android:id="@+id/enemyName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="пееменная имени"
+                        android:text="Ворог"
                         android:textColor="#F0D9B5"
                         android:textSize="28sp"
                         android:textStyle="bold"
@@ -78,26 +91,23 @@
                         android:shadowRadius="2"/>
 
                     <!-- ===== хп ===== -->
-                    <!-- контейнер для хп -->
                     <LinearLayout
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center">
 
-                        <!-- текст хп отдельно -->
                         <TextView
                             android:id="@+id/hpText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="переменная хп"
+                            android:text="0 / 0 HP"
                             android:textColor="#F0D9B5"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:fontFamily="monospace"
                             android:layout_marginBottom="4dp"/>
 
-                        <!-- ха бар -->
                         <ProgressBar
                             android:id="@+id/hpBar"
                             style="?android:attr/progressBarStyleHorizontal"
@@ -114,23 +124,30 @@
                 </LinearLayout>
             </RelativeLayout>
 
+            <!-- Кнопка атаки -->
             <Button
-                android:id="@+id/testKillButton"
+                android:id="@+id/attackButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:text="тест"
-                android:textSize="24sp"
+                android:text="⚔️ АТАКУВАТИ (0) ⚔️"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#F0D9B5"
-                android:background="@drawable/battle_button"
-                android:fontFamily="serif"
-                android:stateListAnimator="@null"/>
+                android:backgroundTint="#4A3727"
+                android:fontFamily="serif"/>
 
-            <View
+            <!-- Кнопка назад -->
+            <Button
+                android:id="@+id/backButton"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"/>
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:text="◀ НАЗАД ДО ЗАВДАНЬ"
+                android:textSize="18sp"
+                android:textColor="#F0D9B5"
+                android:backgroundTint="#4A3727"
+                android:fontFamily="serif"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
