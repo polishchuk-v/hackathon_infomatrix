@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_dark">
+
+    <View
+        android:id="@+id/swipeBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/steel_blue"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/leftSwipeButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        android:paddingEnd="16dp"
+        android:layout_marginEnd="8dp">
+
+        <ImageView
+            android:id="@+id/btnDelete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_delete"
+            android:tint="@color/steel_blue"
+            android:layout_marginEnd="12dp" />
+
+        <ImageView
+            android:id="@+id/btnGenerate"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_ai"
+            android:tint="@color/accent_blue" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/taskContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="@android:color/transparent">
+
+        <CheckBox
+            android:id="@+id/taskCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/steel_blue"
+            android:layout_marginEnd="12dp"/>
+
+        <TextView
+            android:id="@+id/taskTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/pale_sky_blue"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"/>
+    </LinearLayout>
+</FrameLayout>
