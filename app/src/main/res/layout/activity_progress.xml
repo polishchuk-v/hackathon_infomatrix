@@ -1,6 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_dark"
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- каркас -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/background_dark"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- батл -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BATTLE"
+                android:textColor="@color/pale_sky_blue"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="serif"
+                android:shadowColor="#4A2E1E"
+                android:shadowDx="3"
+                android:shadowDy="3"
+                android:shadowRadius="3"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Информация о количестве ударов -->
+            <TextView
+                android:id="@+id/attacksCountText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚔️ УДАРІВ: 0 ⚔️"
+                android:textColor="@color/pale_sky_blue"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:fontFamily="serif"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- контейнер моба -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <!-- спрайт -->
+                    <ImageView
+                        android:id="@+id/enemySprite"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:src="@drawable/goblin1"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Enemy Sprite"/>
+
+                    <!-- имя моба -->
+                    <TextView
+                        android:id="@+id/enemyName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ворог"
+                        android:textColor="@color/pale_sky_blue"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:fontFamily="serif"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="12dp"
+                        android:shadowColor="#4A2A1A"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="2"/>
+
+                    <!-- ===== хп ===== -->
+                    <LinearLayout
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+
+                        <TextView
+                            android:id="@+id/hpText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 / 0 HP"
+                            android:textColor="@color/pale_sky_blue"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:fontFamily="monospace"
+                            android:layout_marginBottom="4dp"/>
+
+                        <ProgressBar
+                            android:id="@+id/hpBar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"
+                            android:progress="75"
+                            android:max="100"
+                            android:progressTint="#B32424"
+                            android:background="#1E130C"
+                            android:padding="2dp"/>
+                    </LinearLayout>
+                    <!-- ===== хп ===== -->
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Кнопка атаки -->
+            <Button
+                android:id="@+id/attackButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:text="⚔️ АТАКУВАТИ (0) ⚔️"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/pale_sky_blue"
+                android:backgroundTint="@color/steel_blue"
+                android:fontFamily="serif"/>
+
+            <!-- Кнопка назад -->
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:text="◀️ НАЗАД ДО ЗАВДАНЬ"
+                android:textSize="18sp"
+                android:textColor="@color/pale_sky_blue"
+                android:backgroundTint="@color/steel_blue"
+                android:fontFamily="serif"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
