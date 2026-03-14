@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -20,6 +19,8 @@ public class TaskAdapter extends BaseAdapter {
     private List<TaskModel> tasks;
     private MainActivity activity;
     private int selectedPosition = -1;
+    private static final float SWIPE_THRESHOLD = 50;
+    private static final float SWIPE_RESISTANCE = 0.3f;
 
     public TaskAdapter(MainActivity activity, List<TaskModel> tasks) {
         this.activity = activity;
@@ -49,14 +50,13 @@ public class TaskAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(activity).inflate(R.layout.item_task, parent, false);
             holder = new ViewHolder();
 
-            // Ініціалізуємо всі view без приведення до FrameLayout
             holder.checkBox = convertView.findViewById(R.id.taskCheckbox);
             holder.title = convertView.findViewById(R.id.taskTitle);
-            holder.swipeBackground = convertView.findViewById(R.id.swipeBackground);
             holder.leftSwipeButtons = convertView.findViewById(R.id.leftSwipeButtons);
             holder.btnDelete = convertView.findViewById(R.id.btnDelete);
             holder.btnGenerate = convertView.findViewById(R.id.btnGenerate);
             holder.taskContainer = convertView.findViewById(R.id.taskContainer);
+
 
             convertView.setTag(holder);
         } else {
@@ -66,8 +66,8 @@ public class TaskAdapter extends BaseAdapter {
         TaskModel task = tasks.get(position);
 
         setupTaskTitle(holder, task);
-        setupCheckbox(holder, task, position);
-        setupButtons(holder, task, position);
+        setupCheckbox(holder, task);
+        setupButtons(holder, task);
         setupSwipeListeners(convertView, holder, position);
 
         return convertView;
@@ -86,7 +86,7 @@ public class TaskAdapter extends BaseAdapter {
         }
     }
 
-    private void setupCheckbox(ViewHolder holder, TaskModel task, int position) {
+    private void setupCheckbox(ViewHolder holder, TaskModel task) {
         if (holder.checkBox != null) {
             holder.checkBox.setChecked(task.isCompleted());
             holder.checkBox.setOnCheckedChangeListener(null);
@@ -97,27 +97,13 @@ public class TaskAdapter extends BaseAdapter {
         }
     }
 
-    private void setupButtons(ViewHolder holder, TaskModel task, int position) {
-        // Кнопка AI
+    private void setupButtons(ViewHolder holder, TaskModel task) {
+
+        // Кнопка AI (закоментована для майбутнього використання)
         if (holder.btnGenerate != null) {
             holder.btnGenerate.setOnClickListener(v -> {
-                // TODO: Розкоментувати пізніше
-                // Intent intent = new Intent(activity, GenerateActivity.class);
-                // intent.putExtra("task_id", task.getId());
-                // intent.putExtra("task_title", task.getTitle());
-                // activity.startActivity(intent);
                 Toast.makeText(activity, "🤖 AI генерація для: " + task.getTitle(), Toast.LENGTH_SHORT).show();
-            });
-        }
-
-        // Кнопка видалення
-        if (holder.btnDelete != null) {
-            holder.btnDelete.setOnClickListener(v -> {
-                activity.deleteTask(task);
-                holder.leftSwipeButtons.setVisibility(View.GONE);
-                if (holder.taskContainer != null) {
-                    holder.taskContainer.animate().translationX(0).setDuration(200).start();
-                }
+                closeSwipeButtons(holder);
             });
         }
     }
@@ -126,12 +112,9 @@ public class TaskAdapter extends BaseAdapter {
         itemView.setOnTouchListener(new View.OnTouchListener() {
             private float startX;
             private boolean isSwiping = false;
-            private static final float SWIPE_THRESHOLD = 50;
-            private static final float SWIPE_RESISTANCE = 0.3f;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // Перевіряємо, чи всі необхідні view існують
                 if (holder.leftSwipeButtons == null || holder.taskContainer == null) {
                     return false;
                 }
@@ -141,26 +124,7 @@ public class TaskAdapter extends BaseAdapter {
                         startX = event.getX();
                         isSwiping = false;
 
-                        // Ховаємо кнопки для всіх інших позицій
-                        if (selectedPosition != -1 && selectedPosition != position) {
-                            View parent = (View) v.getParent();
-                            if (parent instanceof ListView) {
-                                ListView listView = (ListView) parent;
-                                int firstVisible = listView.getFirstVisiblePosition();
-                                int lastVisible = listView.getLastVisiblePosition();
-
-                                if (selectedPosition >= firstVisible && selectedPosition <= lastVisible) {
-                                    View prevView = listView.getChildAt(selectedPosition - firstVisible);
-                                    if (prevView != null) {
-                                        ViewHolder prevHolder = (ViewHolder) prevView.getTag();
-                                        if (prevHolder != null && prevHolder.leftSwipeButtons != null && prevHolder.taskContainer != null) {
-                                            prevHolder.leftSwipeButtons.setVisibility(View.GONE);
-                                            prevHolder.taskContainer.animate().translationX(0).setDuration(200).start();
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        closeOtherSwipeButtons(v, position);
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
@@ -178,19 +142,7 @@ public class TaskAdapter extends BaseAdapter {
 
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        if (isSwiping && holder.taskContainer.getTranslationX() < -holder.leftSwipeButtons.getWidth() / 2) {
-                            holder.leftSwipeButtons.setVisibility(View.VISIBLE);
-                            holder.taskContainer.animate().translationX(-holder.leftSwipeButtons.getWidth()).setDuration(200).start();
-                            selectedPosition = position;
-                        } else {
-                            holder.leftSwipeButtons.setVisibility(View.GONE);
-                            holder.taskContainer.animate().translationX(0).setDuration(200).start();
-                            selectedPosition = -1;
-
-                            if (!isSwiping) {
-                                v.performClick();
-                            }
-                        }
+                        handleSwipeEnd(holder, position, v, isSwiping);
                         return true;
                 }
                 return false;
@@ -198,15 +150,61 @@ public class TaskAdapter extends BaseAdapter {
         });
     }
 
+    private void closeOtherSwipeButtons(View currentView, int currentPosition) {
+        if (selectedPosition != -1 && selectedPosition != currentPosition) {
+            View parent = (View) currentView.getParent();
+            if (parent instanceof ListView) {
+                ListView listView = (ListView) parent;
+                int firstVisible = listView.getFirstVisiblePosition();
+
+                View prevView = listView.getChildAt(selectedPosition - firstVisible);
+                if (prevView != null) {
+                    ViewHolder prevHolder = (ViewHolder) prevView.getTag();
+                    if (prevHolder != null) {
+                        closeSwipeButtons(prevHolder);
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleSwipeEnd(ViewHolder holder, int position, View view, boolean isSwiping) {
+        if (isSwiping && holder.taskContainer.getTranslationX() < -holder.leftSwipeButtons.getWidth() / 2) {
+            holder.leftSwipeButtons.setVisibility(View.VISIBLE);
+            holder.taskContainer.animate()
+                    .translationX(-holder.leftSwipeButtons.getWidth())
+                    .setDuration(200)
+                    .start();
+            selectedPosition = position;
+        } else {
+            closeSwipeButtons(holder);
+            selectedPosition = -1;
+
+            if (!isSwiping) {
+                view.performClick();
+            }
+        }
+    }
+
+    private void closeSwipeButtons(ViewHolder holder) {
+        if (holder.leftSwipeButtons != null && holder.taskContainer != null) {
+            holder.leftSwipeButtons.setVisibility(View.GONE);
+            holder.taskContainer.animate()
+                    .translationX(0)
+                    .setDuration(200)
+                    .start();
+        }
+    }
+
     public void updateTasks(List<TaskModel> newTasks) {
         this.tasks = newTasks;
         notifyDataSetChanged();
+        selectedPosition = -1;
     }
 
     static class ViewHolder {
         CheckBox checkBox;
         TextView title;
-        View swipeBackground;
         LinearLayout leftSwipeButtons;
         ImageView btnDelete;
         ImageView btnGenerate;

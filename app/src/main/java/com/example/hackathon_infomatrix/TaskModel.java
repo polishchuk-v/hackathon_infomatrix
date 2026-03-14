@@ -5,32 +5,57 @@ public class TaskModel {
     private String title;
     private boolean completed;
     private long createdAt;
-    private String userId;
+    private String userEmail; // Змінено з userId на userEmail
 
     public TaskModel() {
         // Порожній конструктор для Firestore
     }
 
-    public TaskModel(String title, boolean completed, long createdAt, String userId) {
+    public TaskModel(String title, boolean completed, long createdAt, String userEmail) {
         this.title = title;
         this.completed = completed;
         this.createdAt = createdAt;
-        this.userId = userId;
+        this.userEmail = userEmail;
     }
 
     // Гетери та сетери
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public boolean isCompleted() { return completed; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
+    public String getTitle() {
+        return title;
+    }
 
-    public long getCreatedAt() { return createdAt; }
-    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 }

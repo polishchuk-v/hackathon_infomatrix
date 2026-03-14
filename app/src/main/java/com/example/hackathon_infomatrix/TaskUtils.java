@@ -23,7 +23,6 @@ public class TaskUtils {
             }
         }
 
-        // Сортуємо: невиконані зверху, виконані знизу
         todayTasks.sort((t1, t2) -> {
             if (t1.isCompleted() && !t2.isCompleted()) return 1;
             if (!t1.isCompleted() && t2.isCompleted()) return -1;
