@@ -9,4 +9,5 @@
         <color name="accent_blue">#1482F0</color>
         <color name="orange">#FFA500</color>
         <color name="red">#FF0000</color>
+        <color name="background_light">#2A2A3A</color>
 </resources>

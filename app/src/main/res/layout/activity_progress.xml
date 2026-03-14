@@ -1,6 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:padding="16dp">
+
+    <!-- Верхня панель з інформацією гравця -->
+
+    <!-- Battle Count -->
+    <LinearLayout
+        android:id="@+id/playerInfoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_border"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/playerLevelText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LVL 1"
+                android:textColor="@color/accent_blue"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/playerDamageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚔ 10"
+                android:textColor="@color/pale_sky_blue"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/playerExpBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="150dp"
+                android:layout_height="15dp"
+                android:background="@drawable/progress_bar_bg"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/steel_blue" />
+
+            <TextView
+                android:id="@+id/playerHealthText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="❤ 100/100"
+                android:textColor="@color/pale_sky_blue"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/battleCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Бій #1"
+        android:textColor="@color/steel_blue"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/playerInfoContainer"/>
+
+    <!-- Контейнер з ворогом -->
+    <LinearLayout
+        android:id="@+id/enemyContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/enemy_card_bg"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        app:layout_constraintBottom_toTopOf="@id/battleControls"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/battleCountText">
+
+        <!-- Спрайт ворога -->
+
+        <!-- Рівень ворога -->
+        <ImageView
+            android:id="@+id/enemySprite"
+            android:layout_width="215dp"
+            android:layout_height="180dp"
+            android:contentDescription="Enemy Sprite"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_person" />
+
+        <TextView
+            android:id="@+id/enemyLevelText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-light"
+            android:text="LVL 1"
+            android:textColor="@color/steel_blue"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <!-- Ім'я ворога -->
+        <TextView
+            android:id="@+id/enemyName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-light"
+            android:shadowColor="#4A2A1A"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="2"
+            android:text="Goblin"
+            android:textColor="@color/pale_sky_blue"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <!-- Текст HP -->
+        <TextView
+            android:id="@+id/hpText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="monospace"
+            android:text="100 / 100 HP"
+            android:textColor="@color/pale_sky_blue"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Прогрес бар HP -->
+        <ProgressBar
+            android:id="@+id/hpBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="250dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/hp_bar_bg"
+            android:max="100"
+            android:padding="2dp"
+            android:progress="100"
+            android:progressTint="#B32424" />
+    </LinearLayout>
+
+    <!-- Бойові кнопки -->
+    <LinearLayout
+        android:id="@+id/battleControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Кнопка атаки -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/attackButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_button_filled"
+            android:backgroundTint="@color/steel_blue"
+            android:fontFamily="sans-serif-light"
+            android:stateListAnimator="@null"
+            android:text="⚔ АТАКА ⚔"
+            android:textAllCaps="false"
+            android:textColor="@color/pale_sky_blue"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+
+        <!-- Кнопка назад -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/backButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_button_border"
+            android:backgroundTint="@null"
+            android:fontFamily="sans-serif-light"
+            android:text="Повернутися до завдань"
+            android:textAllCaps="false"
+            android:textColor="@color/pale_sky_blue"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

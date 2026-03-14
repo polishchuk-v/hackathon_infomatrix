@@ -2,8 +2,10 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_dark">
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="16dp">
 
+<!-- Swipe background for delete/generate actions -->
     <View
         android:id="@+id/swipeBackground"
         android:layout_width="match_parent"
@@ -11,56 +13,109 @@
         android:background="@color/steel_blue"
         android:visibility="gone" />
 
+    <!-- Swipe buttons container -->
     <LinearLayout
         android:id="@+id/leftSwipeButtons"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:orientation="horizontal"
+        android:layout_marginEnd="8dp"
         android:gravity="center_vertical"
-        android:visibility="gone"
+        android:orientation="horizontal"
         android:paddingEnd="16dp"
-        android:layout_marginEnd="8dp">
+        android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/btnDelete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_delete"
-            android:tint="@color/steel_blue"
-            android:layout_marginEnd="12dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/rounded_button_small"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp">
 
-        <ImageView
-            android:id="@+id/btnGenerate"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_ai"
-            android:tint="@color/accent_blue" />
+            <ImageView
+                android:id="@+id/btnDelete"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_delete"
+                android:tint="@color/background_dark" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Видалити"
+                android:textColor="@color/background_dark"
+                android:textSize="10sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button_small"
+            android:backgroundTint="@color/accent_blue"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/btnGenerate"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_ai"
+                android:tint="@color/background_dark" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI"
+                android:textColor="@color/background_dark"
+                android:textSize="10sp"/>
+        </LinearLayout>
     </LinearLayout>
 
+    <!-- Main task container -->
     <LinearLayout
         android:id="@+id/taskContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="@drawable/task_item_bg"
         android:gravity="center_vertical"
-        android:padding="12dp"
-        android:background="@android:color/transparent">
+        android:orientation="horizontal"
+        android:padding="12dp">
 
         <CheckBox
             android:id="@+id/taskCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/steel_blue"
-            android:layout_marginEnd="12dp"/>
+            android:layout_marginEnd="12dp"
+            android:buttonTint="@color/steel_blue" />
 
-        <TextView
-            android:id="@+id/taskTitle"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/pale_sky_blue"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/taskTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Task Title"
+                android:textColor="@color/pale_sky_blue"
+                android:textSize="16sp"/>
+
+            <!-- EXP Badge -->
+            <TextView
+                android:id="@+id/expBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="+10 exp"
+                android:textColor="@color/accent_blue"
+                android:textSize="12sp"
+                android:visibility="visible"/>
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

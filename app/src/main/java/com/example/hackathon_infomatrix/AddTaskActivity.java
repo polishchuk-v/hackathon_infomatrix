@@ -2,10 +2,12 @@ package com.example.hackathon_infomatrix;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +28,7 @@ public class AddTaskActivity extends AppCompatActivity {
     private EditText taskTitleEditText;
     private Button createButton;
     private Toolbar toolbar;
+    private ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -43,9 +46,14 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        taskTitleEditText = findViewById(R.id.editTextLoginEmail);
+        // ВИПРАВЛЕНО: додано ініціалізацію всіх полів
+        taskTitleEditText = findViewById(R.id.taskTitleEditText);
         createButton = findViewById(R.id.butonCreate);
         toolbar = findViewById(R.id.toolbar);
+        progressBar = findViewById(R.id.progressBar);
+
+        // Лог для перевірки
+        Log.d("AddTask", "Views initialized: " + (taskTitleEditText != null));
     }
 
     private void setupFirebase() {
@@ -54,8 +62,11 @@ public class AddTaskActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
 
         if (currentUser == null) {
+            Log.e("AddTask", "Користувач не авторизований");
             Toast.makeText(this, "Користувач не авторизований", Toast.LENGTH_SHORT).show();
             finish();
+        } else {
+            Log.d("AddTask", "Користувач: " + currentUser.getEmail());
         }
     }
 
@@ -83,7 +94,15 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void createTask() {
+        // ВИПРАВЛЕНО: перевірка на null
+        if (taskTitleEditText == null) {
+            Log.e("AddTask", "taskTitleEditText is null");
+            Toast.makeText(this, "Помилка ініціалізації", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String title = taskTitleEditText.getText().toString().trim();
+        Log.d("AddTask", "Створення завдання: " + title);
 
         if (TextUtils.isEmpty(title)) {
             taskTitleEditText.setError("Введіть назву завдання");
@@ -91,36 +110,66 @@ public class AddTaskActivity extends AppCompatActivity {
             return;
         }
 
-        if (currentUser == null) return;
+        if (currentUser == null) {
+            Log.e("AddTask", "currentUser is null");
+            Toast.makeText(this, "Помилка авторизації", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Показуємо індикатор завантаження (можна додати ProgressBar)
-        createButton.setEnabled(false);
+        setLoading(true);
 
-        // Створюємо об'єкт завдання
-        Map<String, Object> task = new HashMap<>();
-        task.put("title", title);
-        task.put("completed", false);
-        task.put("createdAt", System.currentTimeMillis());
-        task.put("userId", currentUser.getUid());
+        int expReward = 10 + (int)(Math.random() * 20); // 10-30 досвіду
 
-        // Зберігаємо в Firestore
+        Map<String, Object> taskMap = new HashMap<>();
+        taskMap.put("title", title);
+        taskMap.put("completed", false);
+        taskMap.put("wasCompleted", false);
+        taskMap.put("createdAt", System.currentTimeMillis());
+        taskMap.put("userId", currentUser.getUid());
+        taskMap.put("expReward", expReward);
+
+        Log.d("AddTask", "Збереження в Firestore...");
+
         db.collection("users").document(currentUser.getUid())
                 .collection("tasks")
                 .document()
-                .set(task)
+                .set(taskMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        createButton.setEnabled(true);
+                    public void onComplete(@NonNull Task<Void> firestoreTask) {
+                        setLoading(false);
 
-                        if (task.isSuccessful()) {
-                            Toast.makeText(AddTaskActivity.this, "Завдання створено", Toast.LENGTH_SHORT).show();
-                            finish(); // Повертаємось на головний екран
+                        if (firestoreTask.isSuccessful()) {
+                            Log.d("AddTask", "Завдання успішно збережено!");
+                            Toast.makeText(AddTaskActivity.this,
+                                    "Завдання створено! +" + expReward + " досвіду",
+                                    Toast.LENGTH_SHORT).show();
+                            finish();
                         } else {
-                            Toast.makeText(AddTaskActivity.this, "Помилка: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            String error = firestoreTask.getException() != null ?
+                                    firestoreTask.getException().getMessage() :
+                                    "Невідома помилка";
+                            Log.e("AddTask", "Помилка: " + error);
+                            Toast.makeText(AddTaskActivity.this,
+                                    "Помилка: " + error,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private void setLoading(boolean isLoading) {
+        if (progressBar != null && createButton != null && taskTitleEditText != null) {
+            if (isLoading) {
+                progressBar.setVisibility(View.VISIBLE);
+                createButton.setEnabled(false);
+                taskTitleEditText.setEnabled(false);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                createButton.setEnabled(true);
+                taskTitleEditText.setEnabled(true);
+            }
+        }
     }
 
     @Override
