@@ -1,40 +1,43 @@
 package com.example.hackathon_infomatrix;
 
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class TaskAdapter extends BaseAdapter {
 
-    private List<TaskModel> tasks;
-    private MainActivity activity;
-    private int selectedPosition = -1;
-    private static final float SWIPE_THRESHOLD = 50;
-    private static final float SWIPE_RESISTANCE = 0.3f;
+    private List<TaskItem> taskList;
+    private LayoutInflater inflater;
+    private FirebaseFirestore db;
+    private String userId;
 
-    public TaskAdapter(MainActivity activity, List<TaskModel> tasks) {
-        this.activity = activity;
-        this.tasks = tasks;
+    public TaskAdapter(MainActivity context, List<TaskItem> taskList) {
+        this.taskList = taskList;
+        this.inflater = LayoutInflater.from(context);
+        this.db = FirebaseFirestore.getInstance();
+        this.userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     @Override
     public int getCount() {
-        return tasks.size();
+        return taskList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return tasks.get(position);
+        return taskList.get(position);
     }
 
     @Override
@@ -47,167 +50,104 @@ public class TaskAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(activity).inflate(R.layout.item_task, parent, false);
+            convertView = inflater.inflate(R.layout.item_task, parent, false);
             holder = new ViewHolder();
-
-            holder.checkBox = convertView.findViewById(R.id.taskCheckbox);
+            holder.checkbox = convertView.findViewById(R.id.taskCheckbox);
             holder.title = convertView.findViewById(R.id.taskTitle);
-            holder.leftSwipeButtons = convertView.findViewById(R.id.leftSwipeButtons);
             holder.btnDelete = convertView.findViewById(R.id.btnDelete);
             holder.btnGenerate = convertView.findViewById(R.id.btnGenerate);
+            holder.swipeBackground = convertView.findViewById(R.id.swipeBackground);
+            holder.leftSwipeButtons = convertView.findViewById(R.id.leftSwipeButtons);
             holder.taskContainer = convertView.findViewById(R.id.taskContainer);
-
-
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        TaskModel task = tasks.get(position);
+        TaskItem task = taskList.get(position);
+        holder.title.setText(task.getTitle());
+        holder.checkbox.setChecked(task.isCompleted());
 
-        setupTaskTitle(holder, task);
-        setupCheckbox(holder, task);
-        setupButtons(holder, task);
-        setupSwipeListeners(convertView, holder, position);
+        // Спочатку ховаємо свайп-кнопки
+        holder.swipeBackground.setVisibility(View.GONE);
+        holder.leftSwipeButtons.setVisibility(View.GONE);
+
+        // Обробка чекбокса
+        holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                task.setCompleted(isChecked);
+                updateTaskInFirestore(task);
+            }
+        });
+
+        // Обробка видалення
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteTask(task, position);
+            }
+        });
+
+        // Обробка кнопки AI
+        holder.btnGenerate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(inflater.getContext(), "AI генерація для: " + task.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Додаємо можливість свайпу (спрощено - просто показуємо кнопки при кліку на контейнер)
+        holder.taskContainer.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                toggleSwipeButtons(holder);
+                return true;
+            }
+        });
 
         return convertView;
     }
 
-    private void setupTaskTitle(ViewHolder holder, TaskModel task) {
-        if (holder.title != null) {
-            holder.title.setText(task.getTitle());
-            if (task.isCompleted()) {
-                holder.title.setPaintFlags(holder.title.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.title.setAlpha(0.6f);
-            } else {
-                holder.title.setPaintFlags(holder.title.getPaintFlags() & (~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG));
-                holder.title.setAlpha(1.0f);
-            }
-        }
-    }
-
-    private void setupCheckbox(ViewHolder holder, TaskModel task) {
-        if (holder.checkBox != null) {
-            holder.checkBox.setChecked(task.isCompleted());
-            holder.checkBox.setOnCheckedChangeListener(null);
-            holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                task.setCompleted(isChecked);
-                activity.updateTaskStatus(task, isChecked);
-            });
-        }
-    }
-
-    private void setupButtons(ViewHolder holder, TaskModel task) {
-
-        // Кнопка AI (закоментована для майбутнього використання)
-        if (holder.btnGenerate != null) {
-            holder.btnGenerate.setOnClickListener(v -> {
-                Toast.makeText(activity, "🤖 AI генерація для: " + task.getTitle(), Toast.LENGTH_SHORT).show();
-                closeSwipeButtons(holder);
-            });
-        }
-    }
-
-    private void setupSwipeListeners(View itemView, ViewHolder holder, int position) {
-        itemView.setOnTouchListener(new View.OnTouchListener() {
-            private float startX;
-            private boolean isSwiping = false;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (holder.leftSwipeButtons == null || holder.taskContainer == null) {
-                    return false;
-                }
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        startX = event.getX();
-                        isSwiping = false;
-
-                        closeOtherSwipeButtons(v, position);
-                        return true;
-
-                    case MotionEvent.ACTION_MOVE:
-                        float deltaX = event.getX() - startX;
-
-                        if (deltaX < 0) {
-                            float translationX = Math.max(deltaX * SWIPE_RESISTANCE, -holder.leftSwipeButtons.getWidth());
-                            holder.taskContainer.setTranslationX(translationX);
-
-                            if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
-                                isSwiping = true;
-                            }
-                        }
-                        return true;
-
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        handleSwipeEnd(holder, position, v, isSwiping);
-                        return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    private void closeOtherSwipeButtons(View currentView, int currentPosition) {
-        if (selectedPosition != -1 && selectedPosition != currentPosition) {
-            View parent = (View) currentView.getParent();
-            if (parent instanceof ListView) {
-                ListView listView = (ListView) parent;
-                int firstVisible = listView.getFirstVisiblePosition();
-
-                View prevView = listView.getChildAt(selectedPosition - firstVisible);
-                if (prevView != null) {
-                    ViewHolder prevHolder = (ViewHolder) prevView.getTag();
-                    if (prevHolder != null) {
-                        closeSwipeButtons(prevHolder);
-                    }
-                }
-            }
-        }
-    }
-
-    private void handleSwipeEnd(ViewHolder holder, int position, View view, boolean isSwiping) {
-        if (isSwiping && holder.taskContainer.getTranslationX() < -holder.leftSwipeButtons.getWidth() / 2) {
-            holder.leftSwipeButtons.setVisibility(View.VISIBLE);
-            holder.taskContainer.animate()
-                    .translationX(-holder.leftSwipeButtons.getWidth())
-                    .setDuration(200)
-                    .start();
-            selectedPosition = position;
-        } else {
-            closeSwipeButtons(holder);
-            selectedPosition = -1;
-
-            if (!isSwiping) {
-                view.performClick();
-            }
-        }
-    }
-
-    private void closeSwipeButtons(ViewHolder holder) {
-        if (holder.leftSwipeButtons != null && holder.taskContainer != null) {
+    private void toggleSwipeButtons(ViewHolder holder) {
+        if (holder.leftSwipeButtons.getVisibility() == View.VISIBLE) {
+            holder.swipeBackground.setVisibility(View.GONE);
             holder.leftSwipeButtons.setVisibility(View.GONE);
-            holder.taskContainer.animate()
-                    .translationX(0)
-                    .setDuration(200)
-                    .start();
+        } else {
+            holder.swipeBackground.setVisibility(View.VISIBLE);
+            holder.leftSwipeButtons.setVisibility(View.VISIBLE);
         }
     }
 
-    public void updateTasks(List<TaskModel> newTasks) {
-        this.tasks = newTasks;
-        notifyDataSetChanged();
-        selectedPosition = -1;
+    private void updateTaskInFirestore(TaskItem task) {
+        db.collection("users").document(userId)
+                .collection("tasks").document(task.getId())
+                .update("completed", task.isCompleted())
+                .addOnFailureListener(e -> {
+                    Toast.makeText(inflater.getContext(), "Помилка оновлення", Toast.LENGTH_SHORT).show();
+                });
     }
 
-    static class ViewHolder {
-        CheckBox checkBox;
+    private void deleteTask(TaskItem task, int position) {
+        db.collection("users").document(userId)
+                .collection("tasks").document(task.getId())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    taskList.remove(position);
+                    notifyDataSetChanged();
+                    Toast.makeText(inflater.getContext(), "Завдання видалено", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(inflater.getContext(), "Помилка видалення", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private static class ViewHolder {
+        CheckBox checkbox;
         TextView title;
+        ImageView btnDelete, btnGenerate;
+        View swipeBackground;
         LinearLayout leftSwipeButtons;
-        ImageView btnDelete;
-        ImageView btnGenerate;
         LinearLayout taskContainer;
     }
 }
